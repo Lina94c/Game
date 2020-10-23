@@ -1,4 +1,4 @@
-// 1. Canvas
+/ 1. Canvas
 const img = new Image();
 img.src ="../Images/bg.png";
 
@@ -32,18 +32,6 @@ const puccaImages = {
   second: "../Images/pucca1.png"
 };
 
-const frankImages = {
-  first: "../Images/Framkie.png",
-  second: "../Images/Framkie.png"
-};
-
-let coinImg = new Image();
-coinImg.src = "../Images/coin.png";
-
-let frames = 0;
-let requestId ;
-let enemies = [];
-
 //Objetos del jugador
 
 //Pucca
@@ -75,20 +63,19 @@ class Player{
     this.x -= 25;
   }
   collition(coin){
-    return(
-        this.x < coin.x + coin.width &&
-        this.x + this.width > coin.x  &&
-        this.y < coin.y + coin.height &&
-        this.y + this.height > coin.y 
-    )
-}
+      return(
+          this.x < coin.x + coin.width &&
+          this.x + this.width > coin.x  &&
+          this.y < coin.y + coin.height &&
+          this.y + this.height > coin.y 
+      )
+  }
   draw(){
     //con esto hacemos que nuestro mario cobre vida y se vea la animacion alternando entre una imagen y la otra
     if(frames % 10 === 0) {
         this.image = this.image === this.image1 ? this.image2 : this.image1
     }
     ctx.drawImage(this.image,this.x,this.y,this.width,this.height)
-}
 }
 
 /*
@@ -104,19 +91,12 @@ document.addEventListener('keydown', e => {
   updateCanvas();
 })*/
 
-/*Frankstein
+//Frankstein
 class Frankie {
-  constructor(x,y,lifes,points,width,height,imgs) {
-    this.x = x;
-    this.y = y;
-    this.width= width;
-    this.height= height;
-    this.image1 = new Image();
-    this.image2 = new Image();
-   
-    this.image1.src = imgs.first;
-    this.image2.src = imgs.second;
-    this.image= this.image1
+  constructor() {
+    this.x = 10;
+    this.y = 360;
+    this.speed=2;
     
 //Imagen
     const img = new Image();
@@ -153,32 +133,38 @@ document.addEventListener('keydown', e => {
   updateCanvas();
 })
 
-//Gatos - Enemigos*/
+//Gatos - Enemigos
  
 
 
 
 //Monedas
 class Coins {
-  constructor(x,y,height,width) {
-    this.x =x;
-    this.y =y;
-    this.height = height;
-    this.width = width;
+  constructor() {
+    this.x = 10;
+    this.y = 380;
+
+//Imagen
+    const img = new Image();
+    img.addEventListener('load', () => {
+
+// Once image loaded => draw
+      this.img = img;
+      this.draw();
+    });
+    img.src ="../Images/coin.png";
   }
+  
   draw() {
-    ctx.drawImage(coinImg, this.x, this.y,25,25);
+    ctx.drawImage(this.img, this.x, this.y,25,25);
   }
 }
 
-
-  
-
- //Declaración personajes
- const pucca = new Player(50,400,4,0,100,50,puccaImages);
- const coin = new Coins();
- coin.x = 25 + (Math.random() * (canvas.width - 64));
+const coin = new Coins();
+  coin.x = 25 + (Math.random() * (canvas.width - 64));
 	coin.y = 25 + (Math.random() * (canvas.height - 64));
+
+ 
 
 //4. UpdateCanvas
 function updateCanvas() {
@@ -186,6 +172,7 @@ function updateCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   backgroundImage.draw();
   pucca.draw();
+  frankie.draw();
   coin.draw();
   requestAnimationFrame(updateCanvas);
   ctx.fillText("Pucca_x: " + pucca.x, 720,40);
@@ -194,27 +181,5 @@ function updateCanvas() {
   ctx.fillText("Puntos: " + pucca.points, 720,100);
 }
 
-// Gameover
-gameOver=()=>{
-  requestId = undefined;
-  ctx.fillText("Game Over", 200, 200);
-}
-//Enemigos
-
-//Sumar puntos
-sumarPuntos=()=>{
-      if(pucca.collition === true){
-      pucca.points +=25;
-  }
-}
-//Movimientos Player
-
-addEventListener("keydown",(event)=>{
-  if(event.keyCode === 38) pucca.y -= 15
-  if(event.keyCode === 40) pucca.y += 15
-  if(event.keyCode === 39) pucca.x += 15
-  if(event.keyCode === 37) pucca.x -= 15
-})
 // start calling updateCanvas once the image is loaded
 img.onload = updateCanvas;
-
