@@ -39,10 +39,10 @@ const frankImages = {
 
 let coinImg = new Image();
 coinImg.src = "../Images/coin.png";
-
 let frames = 0;
 let requestId ;
 let enemies = [];
+let timer=0;
 
 //Objetos del jugador
 
@@ -75,12 +75,15 @@ class Player{
     this.x -= 25;
   }
   collition(coin){
-    return(
+    if(
         this.x < coin.x + coin.width &&
         this.x + this.width > coin.x  &&
         this.y < coin.y + coin.height &&
         this.y + this.height > coin.y 
-    )
+    ){
+      this.points++;
+      updateCanvas();
+    }
 }
   draw(){
     //con esto hacemos que nuestro mario cobre vida y se vea la animacion alternando entre una imagen y la otra
@@ -91,22 +94,10 @@ class Player{
 }
 }
 
-/*
-const pucca = new Pucca();
 
-document.addEventListener('keydown', e => {
-  switch (e.keyCode) {
-    case 38: pucca.moveUp();    console.log('up',    pucca); break;
-    case 40: pucca.moveDown();  console.log('down',  pucca); break;
-    case 39: pucca.moveRight(); console.log('right', pucca); break;
-    case 37: pucca.moveLeft();  console.log('left',  pucca); break;
-  }
-  updateCanvas();
-})*/
-
-/*Frankstein
-class Frankie {
-  constructor(x,y,lifes,points,width,height,imgs) {
+//Frankstein
+class Enemy {
+  constructor(x,y,width,height,imgs) {
     this.x = x;
     this.y = y;
     this.width= width;
@@ -117,16 +108,6 @@ class Frankie {
     this.image1.src = imgs.first;
     this.image2.src = imgs.second;
     this.image= this.image1
-    
-//Imagen
-    const img = new Image();
-    img.addEventListener('load', () => {
-
-// Once image loaded => draw
-      this.img = img;
-      this.draw();
-    });
-    img.src ="../Images/frankie.png";
   }
   moveUp() {
     this.y -= 15;
@@ -137,12 +118,15 @@ class Frankie {
   moveRight() {
     this.x += 15;
 }
-  draw() {
-    ctx.drawImage(this.img, this.x, this.y,40,60);
+draw(){
+  //con esto hacemos que nuestro mario cobre vida y se vea la animacion alternando entre una imagen y la otra
+  if(frames % 10 === 0) {
+      this.image = this.image === this.image1 ? this.image2 : this.image1
   }
+  ctx.drawImage(this.image,this.x,this.y,this.width,this.height)
+}
 }
 
-const frankie = new Frankie();
 
 document.addEventListener('keydown', e => {
   switch (e.keyCode) {
@@ -154,6 +138,10 @@ document.addEventListener('keydown', e => {
 })
 
 //Gatos - Enemigos*/
+generateEnemies=()=>{
+  
+
+}
  
 
 
@@ -168,32 +156,40 @@ class Coins {
   }
   draw() {
     ctx.drawImage(coinImg, this.x, this.y,25,25);
+    if(timer > 6){
+      Coins.draw = false;
+    }
   }
 }
-
-
-  
-
  //Declaración personajes
- const pucca = new Player(50,400,4,0,100,50,puccaImages);
+ const pucca = new Player(80,440,4,0,60,35,puccaImages);
+ const frankie = new Enemy(25,400,45,70,frankImages);
  const coin = new Coins();
- coin.x = 25 + (Math.random() * (canvas.width - 64));
-	coin.y = 25 + (Math.random() * (canvas.height - 64));
+ coin.x = 32 + (Math.random() * (canvas.width - 64));
+ coin.y = 32 + (Math.random() * (canvas.height - 64));
+  
 
 //4. UpdateCanvas
 function updateCanvas() {
-  backgroundImage.move();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   backgroundImage.draw();
+  frankieCollision();
+  borderCollision();
   pucca.draw();
   coin.draw();
+  frankie.draw();
+  score();
   requestAnimationFrame(updateCanvas);
+}
+
+//Score
+
+score=()=>{
   ctx.fillText("Pucca_x: " + pucca.x, 720,40);
   ctx.fillText("Pucca_y: " + pucca.y, 720,60);
   ctx.fillText("Vidas: " + pucca.lifes, 720,80);
   ctx.fillText("Puntos: " + pucca.points, 720,100);
 }
-
 // Gameover
 gameOver=()=>{
   requestId = undefined;
@@ -202,19 +198,60 @@ gameOver=()=>{
 //Enemigos
 
 //Sumar puntos
-sumarPuntos=()=>{
-      if(pucca.collition === true){
-      pucca.points +=25;
+coinTimer=()=>{
+  if(coin.draw){
+    timer++;
+  }
+  else{
+    timer=0;
+  }
+}
+ 
+
+//Limite jugador , falta agregar direcciones
+borderCollision=()=>{
+  if(pucca.y <= 330){
+    pucca.y = 330;
+  }
+  else if(pucca.x <=10) {
+    pucca.x = 0;
+  }
+  else if (pucca.y + pucca.height >= canvas.height-6){
+    pucca.y= canvas.height - pucca.height;
+    
+  }
+  else if (pucca.x + pucca.width >= canvas.width-6){
+    pucca.x= canvas.width - pucca.width;
+    
+  }
+}
+
+frankieCollision=()=>{
+  if(frankie.y <= 300){
+    frankie.y = 300;
+  }
+  else if(frankie.x <=10) {
+    frankie.x = 0;
+  }
+  else if (frankie.y + frankie.height >= canvas.height-6){
+    frankie.y= canvas.height - frankie.height;
+    
+  }
+  else if (frankie.x + frankie.width >= canvas.width-6){
+    frankie.x= frankie.width - frankie.width;
+    
   }
 }
 //Movimientos Player
-
-addEventListener("keydown",(event)=>{
-  if(event.keyCode === 38) pucca.y -= 15
-  if(event.keyCode === 40) pucca.y += 15
-  if(event.keyCode === 39) pucca.x += 15
-  if(event.keyCode === 37) pucca.x -= 15
+document.addEventListener('keydown', e => {
+  switch (e.keyCode) {
+    case 38: pucca.moveUp();    console.log('up',    pucca); break;
+    case 40: pucca.moveDown();  console.log('down',  pucca); break;
+    case 39: pucca.moveRight(); console.log('right', pucca); break;
+  }
+  updateCanvas();
 })
 // start calling updateCanvas once the image is loaded
 img.onload = updateCanvas;
+
 
