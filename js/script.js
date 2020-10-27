@@ -4,18 +4,18 @@ img.src ="../Images/bg.png";
 
 const canvas = document.getElementById('mi-canvas');
 const ctx = canvas.getContext('2d');
+ctx.font = "10px Calibri";
+ctx.fillStyle = "white";
 
 // Fondo en movimiento
 const backgroundImage = {
   img: img,
   x: 0,
   speed: -1,
-
   move: function() {
     this.x += this.speed;
     this.x %= canvas.width;
   },
-
   draw: function() {
     ctx.drawImage(this.img, this.x, 0);
     if (this.speed < 0) {
@@ -39,9 +39,16 @@ const frankImages = {
 
 let coinImg = new Image();
 coinImg.src = "../Images/coin.png";
+
+let catImg = new Image();
+catImg.src = "../Images/Frankie.png";
+
+let gameImg = new Image();
+gameImg.src = "../Images/Game over.png";
+
+let coins =[];
 let frames = 0;
-let requestId ;
-let enemies = [];
+let cats = [];
 let timer=0;
 
 //Objetos del jugador
@@ -75,18 +82,15 @@ class Player{
     this.x -= 25;
   }
   collition(coin){
-    if(
+    return(
         this.x < coin.x + coin.width &&
         this.x + this.width > coin.x  &&
         this.y < coin.y + coin.height &&
         this.y + this.height > coin.y 
-    ){
-      this.points++;
-      updateCanvas();
-    }
+    )
 }
   draw(){
-    //con esto hacemos que nuestro mario cobre vida y se vea la animacion alternando entre una imagen y la otra
+    //animación
     if(frames % 10 === 0) {
         this.image = this.image === this.image1 ? this.image2 : this.image1
     }
@@ -95,7 +99,7 @@ class Player{
 }
 
 
-//Frankstein
+/*Frankstein
 class Enemy {
   constructor(x,y,width,height,imgs) {
     this.x = x;
@@ -118,8 +122,9 @@ class Enemy {
   moveRight() {
     this.x += 15;
 }
+
 draw(){
-  //con esto hacemos que nuestro mario cobre vida y se vea la animacion alternando entre una imagen y la otra
+  //animación
   if(frames % 10 === 0) {
       this.image = this.image === this.image1 ? this.image2 : this.image1
   }
@@ -130,21 +135,29 @@ draw(){
 
 document.addEventListener('keydown', e => {
   switch (e.keyCode) {
-    case 38: frankie.moveUp();    console.log('up',    frankie); break;
-    case 40: frankie.moveDown();  console.log('down',  frankie); break;
-    case 39: frankie.moveRight(); console.log('right', frankie); break;
+    case 38: frankie.moveUp(); break;
+    case 40: frankie.moveDown(); break;
+    case 39: frankie.moveRight(); break;
   }
-  updateCanvas();
-})
+})*/
 
-//Gatos - Enemigos*/
-generateEnemies=()=>{
-  
-
+//Gatos - Enemigos
+class Cats {
+  constructor(x,y,height,width) {
+    this.x =x;
+    this.y =y;
+    this.speed= -1;
+    this.height = height;
+    this.width = width;
+  }
+  move(){
+    this.x += this.speed;
+    this.x %= canvas.width;
+  }
+  draw() {
+    ctx.drawImage(catImg, this.x, this.y,25,25);
+  }
 }
- 
-
-
 
 //Monedas
 class Coins {
@@ -156,29 +169,30 @@ class Coins {
   }
   draw() {
     ctx.drawImage(coinImg, this.x, this.y,25,25);
-    if(timer > 6){
-      Coins.draw = false;
-    }
   }
 }
  //Declaración personajes
- const pucca = new Player(80,440,4,0,60,35,puccaImages);
- const frankie = new Enemy(25,400,45,70,frankImages);
- const coin = new Coins();
- coin.x = 32 + (Math.random() * (canvas.width - 64));
- coin.y = 32 + (Math.random() * (canvas.height - 64));
+ const pucca = new Player(80,440,4,0,60,45.75,puccaImages);
+ const coin = new Coins(300,400,50,50);
+ const cat = new Cats(300,400,50,50);
   
 
 //4. UpdateCanvas
 function updateCanvas() {
+  frames++;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   backgroundImage.draw();
-  frankieCollision();
+  backgroundImage.move();
+  cat.move();
+  //frankieCollision();
   borderCollision();
   pucca.draw();
-  coin.draw();
-  frankie.draw();
+  generateCats();
+  drawCats();
+  generateCoins();
+  drawCoins();
   score();
+  gameOver();
   requestAnimationFrame(updateCanvas);
 }
 
@@ -192,21 +206,50 @@ score=()=>{
 }
 // Gameover
 gameOver=()=>{
-  requestId = undefined;
-  ctx.fillText("Game Over", 200, 200);
+  if(pucca.lifes == 0){
+    ctx.drawImage(gameImg,250,50,350,350);
+}
 }
 //Enemigos
-
-//Sumar puntos
-coinTimer=()=>{
-  if(coin.draw){
-    timer++;
-  }
-  else{
-    timer=0;
+generateCats=()=>{;
+  let y = Math.floor(Math.random()*(450-330)+330);
+  const cat = new Cats(750,y,50,50);
+  if(frames%150 == 0){
+    cats.push(cat)
   }
 }
- 
+
+drawCats=()=>{
+  cats.forEach((cat,index)=>{
+    if(pucca.collition(cat)){
+      cats.splice(index,1)
+      pucca.lifes -= 1;
+    }
+    cat.draw()
+  })
+}
+
+
+// Generar Monedas
+generateCoins=()=>{
+  let x = Math.floor(Math.random()*18);
+  let y = Math.floor(Math.random()*(450-330)+330);
+  const coin = new Coins(x*64,y,50,50);
+  if(frames%200 == 0){
+    //console.log("Generando moneda",coin)
+    coins.push(coin)
+  }
+}
+
+drawCoins=()=>{
+  coins.forEach((coin,index)=>{
+    if(pucca.collition(coin)){
+      coins.splice(index,1)
+      pucca.points +=25;
+    }
+    coin.draw()
+  })
+}
 
 //Limite jugador , falta agregar direcciones
 borderCollision=()=>{
@@ -245,13 +288,13 @@ frankieCollision=()=>{
 //Movimientos Player
 document.addEventListener('keydown', e => {
   switch (e.keyCode) {
-    case 38: pucca.moveUp();    console.log('up',    pucca); break;
-    case 40: pucca.moveDown();  console.log('down',  pucca); break;
-    case 39: pucca.moveRight(); console.log('right', pucca); break;
+    case 38: pucca.moveUp();    /*console.log('up',    pucca);*/ break;
+    case 40: pucca.moveDown();  /*console.log('down',  pucca);*/break;
+    case 39: pucca.moveRight(); /*console.log('right', pucca);*/break;
+    case 37: pucca.moveLeft(); /*console.log('right', pucca);*/break;
   }
-  updateCanvas();
 })
 // start calling updateCanvas once the image is loaded
-img.onload = updateCanvas;
+updateCanvas();
 
 
