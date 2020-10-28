@@ -18,8 +18,13 @@ h1 {
 }
 
 .logo{
- width: 500px;
- margin: 0;
- image-orientation: inherit;
+  display:block;
+  margin:auto;
+  width:500px;
+}
+
+.container {
+  display:block;
+  margin:auto;
 }
 

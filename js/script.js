@@ -49,7 +49,8 @@ gameImg.src = "../Images/Game over.png";
 let coins =[];
 let frames = 0;
 let cats = [];
-let timer=0;
+let time=0;
+let requestId;
 
 //Objetos del jugador
 
@@ -155,7 +156,9 @@ class Cats {
     this.x %= canvas.width;
   }
   draw() {
+    this.x -= 3;
     ctx.drawImage(catImg, this.x, this.y,25,25);
+
   }
 }
 
@@ -168,12 +171,12 @@ class Coins {
     this.width = width;
   }
   draw() {
-    ctx.drawImage(coinImg, this.x, this.y,25,25);
+    ctx.drawImage(coinImg, this.x, this.y,30,18.16)
   }
 }
  //Declaración personajes
  const pucca = new Player(80,440,4,0,60,45.75,puccaImages);
- const coin = new Coins(300,400,50,50);
+ const coin = new Coins(300,400);
  const cat = new Cats(300,400,50,50);
   
 
@@ -192,7 +195,9 @@ function updateCanvas() {
   generateCoins();
   drawCoins();
   score();
-  gameOver();
+  if(!requestId){
+   return gameOver();
+  }
   requestAnimationFrame(updateCanvas);
 }
 
@@ -204,12 +209,7 @@ score=()=>{
   ctx.fillText("Vidas: " + pucca.lifes, 720,80);
   ctx.fillText("Puntos: " + pucca.points, 720,100);
 }
-// Gameover
-gameOver=()=>{
-  if(pucca.lifes == 0){
-    ctx.drawImage(gameImg,250,50,350,350);
-}
-}
+
 //Enemigos
 generateCats=()=>{;
   let y = Math.floor(Math.random()*(450-330)+330);
@@ -225,6 +225,9 @@ drawCats=()=>{
       cats.splice(index,1)
       pucca.lifes -= 1;
     }
+    if (pucca.lifes < 1){
+      return gameOver();
+        }
     cat.draw()
   })
 }
@@ -251,6 +254,23 @@ drawCoins=()=>{
   })
 }
 
+//You win
+youWin=()=>{
+  ctx.drawImage(gameImg,250,50,350,350);
+  requestId = undefined;
+}
+
+//Start game
+
+startGame=()=>{
+  requestId = requestAnimationFrame(updateCanvas);
+}
+
+// Gameover
+gameOver=()=>{
+    ctx.drawImage(gameImg,250,50,350,350);
+    requestId = undefined;
+}
 //Limite jugador , falta agregar direcciones
 borderCollision=()=>{
   if(pucca.y <= 330){
@@ -295,6 +315,6 @@ document.addEventListener('keydown', e => {
   }
 })
 // start calling updateCanvas once the image is loaded
-updateCanvas();
+startGame();
 
 
