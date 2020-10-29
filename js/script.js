@@ -259,6 +259,7 @@ drawHearts=()=>{
 //You win
 youWin=()=>{
   ctx.drawImage(winImg,250,50,350,350);
+  updateCanvas = false;
 }
 
 //Start game
