@@ -293,6 +293,7 @@ borderCollision=()=>{
 
 //Movimientos Player
 document.addEventListener('keydown', e => {
+  e.preventDefault()
   switch (e.keyCode) {
     case 38: pucca.moveUp();    /*console.log('up',    pucca);*/ break;
     case 40: pucca.moveDown();  /*console.log('down',  pucca);*/break;
