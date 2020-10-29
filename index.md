@@ -10,10 +10,7 @@
     <body>
        <div>
          <img class="logo" src="Images/Logo_Mesa de trabajo 1.png"/>
-
-         
        </div>
-      
     </section>
     <section class="fondo" >
       <div class="pucca">
