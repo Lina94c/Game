@@ -162,7 +162,6 @@ function updateCanvas() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   backgroundImage.draw();
   backgroundImage.move();
-  musica();
   borderCollision();
   pucca.draw();
   generateCats();
@@ -265,6 +264,7 @@ youWin=()=>{
 //Start game
 startGame=()=>{
   requestId = requestAnimationFrame(updateCanvas);
+  sonido.play();
 }
 
 // Gameover
@@ -302,12 +302,9 @@ document.addEventListener('keydown', e => {
   }
 })
 
-//Música
-musica=()=>{
-  sonido.play();
-}
 // Restart
 window.onload = () => {
+  sonido.play()
   document.getElementById('start-button').onclick = () => {
     location.reload();
   };
