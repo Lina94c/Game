@@ -1,9 +1,14 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins');
+
+
 body {
   background: url("./Images/Back.jpg") no-repeat center center fixed;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+  font-family: 'Poppins';
+  color: aliceblue;
 }
 
 
@@ -26,5 +31,58 @@ h1 {
 .container {
   display:block;
   margin:auto;
+}
+
+.start{
+  display:block;
+  width: 100px;
+  margin:auto;
+}
+
+.start:hover{
+  display:block;
+  width: 120px;
+  margin:auto;
+}
+
+.huellita{
+  display:block;
+  margin:auto;
+  width:200px;
+  
+}
+
+.huellita:hover{
+  display:block;
+  margin:auto;
+  width:220px;
+  
+}
+
+.estilo {
+  display:flex;
+  flex-direction:row;
+  justify-content:space-evenly;
+  align-items: flex-start;
+  justify-items: center;
+  text-align: center;
+}
+
+.images{
+  width: 200px;
+}
+
+.fondo{
+  background:rgba(0, 0, 0, 0.2) ;
+  width: 900px;
+  margin: auto;
+  border-radius: 20px;
+  display: block;
+  
+}
+
+.pucca {
+  justify-items: center;
+  text-align: center;
 }
 
