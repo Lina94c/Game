@@ -1,6 +1,6 @@
 // 1. Canvas
 const img = new Image();
-img.src ="../Images/bg.png";
+img.src ="../images/bg.png";
 
 const canvas = document.getElementById('mi-canvas');
 const ctx = canvas.getContext('2d');
@@ -28,24 +28,24 @@ const backgroundImage = {
 
 //2. Personajes & elementos
 const puccaImages = {
-  first: "../Images/pucca.png",
-  second: "../Images/pucca1.png"
+  first: "../images/pucca.png",
+  second: "../images/pucca1.png"
 };
 
 let coinImg = new Image();
-coinImg.src = "../Images/coin.png";
+coinImg.src = "../images/hueso.png";
 
 let heartImg = new Image();
-heartImg.src = "../Images/Heart-08.png";
+heartImg.src = "../images/heart.png";
 
 let gameImg = new Image();
-gameImg.src = "../Images/Game over.png";
+gameImg.src = "../images/gameover.png";
 
 let winImg = new Image();
-winImg.src = "../Images/win-01.png";
+winImg.src = "../images/win-01.png";
 
 let sonido = new Audio();
-sonido.src ="../Images/Halloween.mp3";
+sonido.src ="../images/music.mp3";
 
 
 let coins =[];
@@ -112,8 +112,8 @@ class Cats {
     this.image1 = new Image();
     this.image2 = new Image();
    
-    this.image1.src ="../Images/Cat-04.png";
-    this.image2.src ="../Images/Cat-04-07.png";
+    this.image1.src ="../images/cat_01.png";
+    this.image2.src ="../images/cat_02.png";
     this.image= this.image1
   }
   draw() {
